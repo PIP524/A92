@@ -1,0 +1,88 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Typing Game</title> 
+<style> 
+#words { font-size: 2em; } 
+#typed { font-size: 2em; } 
+#timer { font-size: 2em; } 
+#points { font-size: 2em; } 
+.incorrect { color: red; } 
+</style> 
+</head> 
+<body> 
+
+<p id="words">apple</p> 
+<p id="typed"></p> 
+
+<script> 
+const words = ["apple", "banana", "cat", "dog", "elephant"]; 
+let wordIndex = 0; 
+let time = 0; 
+let points = 0; 
+
+function updateWord() { 
+  document.querySelector("#words").textContent = words[wordIndex]; 
+} 
+
+function startGame() { 
+  updateWord(); 
+  document.querySelector("#typed").textContent = ""; 
+  time = 0; 
+  points = 0; 
+  document.querySelector("#timer").textContent = time; 
+  document.querySelector("#points").textContent = points; 
+} 
+
+function checkWord() { 
+  let typedText = document.querySelector("#typed").textContent; 
+  if (typedText === words[wordIndex]) { 
+    points++; 
+    document.querySelector("#points").textContent = points; 
+    document.querySelector("#typed").textContent = ""; 
+    if (wordIndex === words.length - 1) wordIndex = 0; 
+    else wordIndex++; 
+    updateWord(); 
+    document.querySelector("#typed").innerHTML += "<br><big>○</big>"; 
+    playAudio("correct.wav"); 
+  } else { 
+    let incorrectLetters = []; 
+    for (let i=0; i<typedText.length; i++) { 
+      if (typedText[i] != words[wordIndex][i]) { 
+        incorrectLetters.push(i); 
+      } 
+    } 
+    for (let i of incorrectLetters) { 
+      document.querySelector("#typed").innerHTML =  
+        document.querySelector("#typed").innerHTML.slice(0, i) + 
+        "<span class='incorrect'>" + document.querySelector("#typed").textContent[i] + "</span>" + 
+        document.querySelector("#typed").innerHTML.slice(i+1); 
+    } 
+  } 
+} 
+
+function playAudio(src) { 
+  let audio = new Audio(src); 
+  audio.play(); 
+} 
+
+setInterval(function() { 
+  time++; 
+  document.querySelector("#timer").textContent = time; 
+}, 1000); 
+
+document.addEventListener("keydown", function(e) { 
+  if (e.code === "Enter") { 
+    checkWord(); 
+  } else { 
+    document.querySelector("#typed").textContent += e.key; 
+  } 
+}); 
+
+startGame(); 
+</script> 
+
+<p id="timer">0</p> 
+<p id="points">0</p> 
+</body> 
+</html>
